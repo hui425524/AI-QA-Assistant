@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="先確認需求完整，再生成可追溯測試案例。">
+    <title>AI QA Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="AI QA Assistant 首頁">
+        <span class="brand-mark" aria-hidden="true">QA</span>
+        <span>AI QA Assistant</span>
+      </a>
+      <span class="mode-chip">Mock mode</span>
+    </header>
+
+    <div id="offline-banner" class="offline-banner" role="status" hidden>
+      目前離線。草稿已保留，恢復連線後即可重新分析。
+    </div>
+
+    <main class="page-shell">
+      <section class="hero" aria-labelledby="page-title">
+        <p class="eyebrow">Requirement readiness gate</p>
+        <h1 id="page-title">先補齊需求，再放心產生測試案例。</h1>
+        <p class="hero-copy">系統不會替你猜。它會指出缺口、提出澄清問題，只有需求就緒時才開放生成。</p>
+        <ol class="steps" aria-label="使用步驟">
+          <li class="is-active"><span>1</span>貼上需求</li>
+          <li><span>2</span>補齊缺口</li>
+          <li><span>3</span>生成案例</li>
+        </ol>
+      </section>
+
+      <div class="workspace-grid">
+        <section class="panel input-panel" aria-labelledby="input-heading">
+          <div class="panel-heading">
+            <div>
+              <p class="section-label">需求輸入</p>
+              <h2 id="input-heading">你要測試什麼？</h2>
+            </div>
+            <button id="fill-example" class="text-button" type="button">填入完整範例</button>
+          </div>
+
+          <form id="analysis-form" novalidate>
+            <label for="project-name">專案名稱 <span class="optional">選填</span></label>
+            <input id="project-name" name="name" maxlength="120" placeholder="例如：會員登入">
+
+            <div class="field-heading">
+              <label for="requirement">需求內容</label>
+              <span id="character-count">0 / 30,000</span>
+            </div>
+            <textarea
+              id="requirement"
+              name="requirement"
+              rows="16"
+              minlength="5"
+              maxlength="30000"
+              aria-describedby="requirement-help requirement-error"
+              placeholder="例如：使用者可以登入系統"
+              required
+            ></textarea>
+            <p id="requirement-help" class="field-help">請包含角色、流程、錯誤處理、限制、權限與預期結果。不要貼入密碼或個資。</p>
+            <p id="requirement-error" class="field-error" role="alert"></p>
+
+            <button id="analyze-button" class="primary-button" type="submit">
+              <span class="button-label">檢查需求完整性</span>
+              <span class="spinner" aria-hidden="true"></span>
+            </button>
+          </form>
+        </section>
+
+        <section id="result-panel" class="panel result-panel" aria-labelledby="result-heading">
+          <div id="idle-state" class="empty-state">
+            <div class="empty-icon" aria-hidden="true">✓</div>
+            <p class="section-label">分析結果</p>
+            <h2 id="result-heading" tabindex="-1">先檢查，再生成</h2>
+            <p>貼上需求後，我們會逐項檢查九個容易被遺漏的資訊。</p>
+            <ul class="mini-checklist">
+              <li>明確指出缺少內容</li>
+              <li>最多提出五個優先問題</li>
+              <li>不完整時前後端都會阻擋生成</li>
+            </ul>
+          </div>
+
+          <div id="analysis-state" class="analysis-state" hidden>
+            <div id="status-card" class="status-card" aria-live="polite">
+              <div>
+                <p id="status-kicker" class="section-label">分析完成</p>
+                <h2 id="status-title" tabindex="-1"></h2>
+                <p id="status-summary"></p>
+              </div>
+              <div class="score" aria-label="需求品質分數">
+                <strong id="score-value">0</strong><span>/100</span>
+              </div>
+            </div>
+
+            <div id="metadata" class="metadata"></div>
+
+            <section id="missing-section" class="result-section" hidden>
+              <h3>目前缺少</h3>
+              <ul id="missing-list" class="tag-list"></ul>
+            </section>
+
+            <section id="questions-section" class="result-section" hidden>
+              <h3>優先澄清問題</h3>
+              <ol id="questions-list" class="question-list"></ol>
+            </section>
+
+            <section class="result-section">
+              <details>
+                <summary>查看九項檢核</summary>
+                <ul id="checklist" class="rubric-list"></ul>
+              </details>
+            </section>
+
+            <div id="error-state" class="error-banner" role="alert" hidden></div>
+          </div>
+        </section>
+      </div>
+
+      <section id="generation-panel" class="panel generation-panel" aria-labelledby="generation-heading">
+        <div>
+          <p class="section-label">下一步</p>
+          <h2 id="generation-heading">生成測試案例</h2>
+          <p id="generation-reason">請先完成需求分析。</p>
+        </div>
+        <button id="generate-button" class="primary-button" type="button" disabled>尚未開放生成</button>
+      </section>
+
+      <section id="cases-panel" class="panel cases-panel" aria-labelledby="cases-heading" hidden>
+        <div class="panel-heading">
+          <div>
+            <p class="section-label">生成結果</p>
+            <h2 id="cases-heading" tabindex="-1">測試案例</h2>
+          </div>
+          <span id="case-version" class="mode-chip"></span>
+        </div>
+        <div id="cases-list" class="cases-list"></div>
+      </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+  </body>
+</html>
