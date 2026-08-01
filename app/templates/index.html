@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="先確認需求完整，再生成可追溯測試案例。">
     <title>AI QA Assistant</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="../static/styles.css">
   </head>
   <body>
     <header class="site-header">
@@ -18,6 +18,11 @@
 
     <div id="offline-banner" class="offline-banner" role="status" hidden>
       目前離線。草稿已保留，恢復連線後即可重新分析。
+    </div>
+
+    <div id="file-mode-banner" class="file-mode-banner" role="alert" hidden>
+      目前是直接開啟 HTML，因此無法連線到需求分析服務。請回到專案資料夾，雙擊
+      <strong>start_ai_qa_assistant.cmd</strong>，再於開啟的網頁進行檢查。
     </div>
 
     <main class="page-shell">
@@ -39,8 +44,25 @@
               <p class="section-label">需求輸入</p>
               <h2 id="input-heading">你要測試什麼？</h2>
             </div>
-            <button id="fill-example" class="text-button" type="button">填入完整範例</button>
           </div>
+
+          <details class="example-template" open>
+            <summary>需求撰寫範本（請依欄位填寫）</summary>
+            <p>把中括號中的提示換成你的需求內容；資訊不足時，檢查結果會列出缺口與澄清問題。</p>
+            <pre>功能目標：[要解決什麼問題、完成什麼任務]
+使用者角色：[誰會使用，是否有不同角色]
+前置條件：[開始操作前必須成立的條件]
+正常流程：[依序描述主要操作與系統回應]
+錯誤處理：[失敗、例外或無效輸入時如何處理]
+輸入限制：[必填、格式、長度或數量限制]
+邊界條件：[最小值、最大值、逾時或特殊情境]
+權限規則：[誰可以或不可以執行]
+預期結果：[成功後畫面、資料或狀態的變化]</pre>
+            <div class="example-actions">
+              <button id="use-template" class="secondary-button" type="button">套用空白範本</button>
+              <button id="fill-example" class="text-button" type="button">套用完整登入範例</button>
+            </div>
+          </details>
 
           <form id="analysis-form" novalidate>
             <label for="project-name">專案名稱 <span class="optional">選填</span></label>
@@ -140,6 +162,6 @@
       </section>
     </main>
 
-    <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+    <script src="../static/app.js" defer></script>
   </body>
 </html>

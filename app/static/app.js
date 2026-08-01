@@ -24,6 +24,18 @@ const casesHeading = document.querySelector("#cases-heading");
 const caseVersion = document.querySelector("#case-version");
 const casesList = document.querySelector("#cases-list");
 const offlineBanner = document.querySelector("#offline-banner");
+const fileModeBanner = document.querySelector("#file-mode-banner");
+const fileMode = window.location.protocol === "file:";
+
+const REQUIREMENT_TEMPLATE = `功能目標：[要解決什麼問題、完成什麼任務]
+使用者角色：[誰會使用，是否有不同角色]
+前置條件：[開始操作前必須成立的條件]
+正常流程：[依序描述主要操作與系統回應]
+錯誤處理：[失敗、例外或無效輸入時如何處理]
+輸入限制：[必填、格式、長度或數量限制]
+邊界條件：[最小值、最大值、逾時或特殊情境]
+權限規則：[誰可以或不可以執行]
+預期結果：[成功後畫面、資料或狀態的變化]`;
 
 const COMPLETE_EXAMPLE = `功能目標：讓會員能以電子郵件與密碼登入並進入個人首頁。
 使用者角色：已註冊且啟用的會員；管理員遵循相同登入流程。
@@ -53,6 +65,15 @@ function setLoading(isLoading, label = "分析中…") {
 }
 
 function syncConnectionState() {
+  fileModeBanner.hidden = !fileMode;
+  if (fileMode) {
+    offlineBanner.hidden = true;
+    analyzeButton.disabled = false;
+    generateButton.disabled = true;
+    generationReason.textContent = "請使用 start_ai_qa_assistant.cmd 啟動服務後再檢查需求。";
+    return;
+  }
+
   const offline = !navigator.onLine;
   offlineBanner.hidden = !offline;
   analyzeButton.disabled = offline;
@@ -195,6 +216,13 @@ form.addEventListener("submit", async (event) => {
     return;
   }
 
+  if (fileMode) {
+    idleState.hidden = true;
+    analysisState.hidden = false;
+    showError("目前是直接開啟 HTML，無法呼叫分析服務。請雙擊專案根目錄的 start_ai_qa_assistant.cmd 後再試一次。");
+    return;
+  }
+
   setLoading(true);
   try {
     const response = await fetch("/api/analyze", {
@@ -243,7 +271,14 @@ generateButton.addEventListener("click", async () => {
 });
 
 document.querySelector("#fill-example").addEventListener("click", () => {
+  projectNameInput.value = "會員登入";
   requirementInput.value = COMPLETE_EXAMPLE;
+  updateCount();
+  requirementInput.focus();
+});
+
+document.querySelector("#use-template").addEventListener("click", () => {
+  requirementInput.value = REQUIREMENT_TEMPLATE;
   updateCount();
   requirementInput.focus();
 });

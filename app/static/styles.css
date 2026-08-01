@@ -74,7 +74,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus
   font-weight: 700;
 }
 
-.offline-banner {
+.offline-banner, .file-mode-banner {
   max-width: 1124px;
   margin: 0 auto;
   padding: 10px 16px;
@@ -84,6 +84,12 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus
   border: 1px solid #edc790;
   font-weight: 750;
   text-align: center;
+}
+
+.file-mode-banner {
+  color: #7b241c;
+  background: #fff0e8;
+  border-color: #efb8a4;
 }
 
 .page-shell {
@@ -119,6 +125,40 @@ h3 { font-size: 17px; }
 .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow); padding: 28px; }
 .panel-heading { display: flex; gap: 20px; align-items: flex-start; justify-content: space-between; }
 
+.example-template {
+  margin-top: 20px;
+  border: 1px solid #b8d9cb;
+  border-radius: 14px;
+  background: #f0f8f4;
+  padding: 14px 16px;
+}
+
+.example-template > p {
+  color: var(--muted);
+  font-size: 14px;
+  margin: 12px 0;
+}
+
+.example-template pre {
+  margin: 0;
+  padding: 14px;
+  overflow-x: auto;
+  border: 1px solid #d6e7df;
+  border-radius: 10px;
+  color: #29443a;
+  background: white;
+  font: 13px/1.7 ui-monospace, SFMono-Regular, Consolas, monospace;
+  white-space: pre-wrap;
+}
+
+.example-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
 label { display: block; font-weight: 750; margin: 22px 0 8px; }
 .optional, .field-help, .field-heading span, .metadata { color: var(--muted); font-size: 13px; font-weight: 500; }
 .field-heading { display: flex; justify-content: space-between; align-items: baseline; margin-top: 22px; }
@@ -129,12 +169,14 @@ input:focus, textarea:focus { border-color: var(--brand); background: white; }
 .field-help { margin: 8px 0; }
 .field-error { color: var(--blocked); min-height: 24px; margin-bottom: 8px; }
 
-.primary-button, .text-button { cursor: pointer; border: 0; font-weight: 800; }
+.primary-button, .secondary-button, .text-button { cursor: pointer; font-weight: 800; }
 .primary-button { min-height: 48px; border-radius: 12px; padding: 12px 18px; background: var(--brand); color: white; }
 .primary-button:hover:not(:disabled) { background: var(--brand-dark); }
 .primary-button:disabled { background: #aeb9b4; cursor: not-allowed; }
 .input-panel .primary-button { width: 100%; }
-.text-button { color: var(--brand); background: transparent; padding: 6px; }
+.secondary-button { color: var(--brand-dark); background: white; border: 1px solid #9bcab6; border-radius: 9px; padding: 7px 12px; }
+.secondary-button:hover { background: var(--brand-soft); }
+.text-button { color: var(--brand); background: transparent; border: 0; padding: 6px; }
 .spinner { display: none; width: 16px; height: 16px; border: 2px solid rgb(255 255 255 / 45%); border-top-color: white; border-radius: 50%; animation: spin .8s linear infinite; }
 .is-loading .spinner { display: inline-block; margin-left: 8px; vertical-align: -3px; }
 @keyframes spin { to { transform: rotate(360deg); } }
