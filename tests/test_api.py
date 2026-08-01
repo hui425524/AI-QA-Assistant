@@ -1,8 +1,26 @@
 from __future__ import annotations
 
 import uuid
+from pathlib import Path
 
 from app import create_app
+
+
+def test_homepage_exposes_template_and_direct_file_guidance(client):
+    response = client.get("/")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "需求撰寫範本" in html
+    assert "功能目標：[要解決什麼問題、完成什麼任務]" in html
+    assert "套用完整登入範例" in html
+    assert "start_ai_qa_assistant.cmd" in html
+
+    template = Path("app/templates/index.html").read_text(encoding="utf-8")
+    assert 'href="../static/styles.css"' in template
+    assert 'src="../static/app.js"' in template
+    assert "{{ url_for" not in template
+    assert Path("start_ai_qa_assistant.cmd").is_file()
 
 
 def _analyze(client, headers, requirement, project_id=None):
